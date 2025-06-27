@@ -1,3 +1,8 @@
+/*
+    NB: Some part of this source file might be horrendous to watch, 
+    i apologize for this mess but my dumb ass could not process the existence of REGEX
+*/
+
 #include "parser.h"
 
 HttpTypesLUT httpTypes[] = {
@@ -10,8 +15,8 @@ HttpTypesLUT httpTypes[] = {
 
 HttpVersLUT httpVer[] = {
     {"HTTP/0.9", HTTP09},
-    {"HTTP/1.0", HTTP10},
     {"HTTP/1.1", HTTP11},
+    {"HTTP/1.0", HTTP10},
     {NULL, UNKNWOWN_HTTP_VER}
 };
 
@@ -85,7 +90,7 @@ request parseRequest(char data[]){
                     break;
                 case 2:
                 //Precaution if too much data is sent
-                    if(k > 2083) 
+                    if(k < 2083) 
                     request.path[k] = data[i];
                     break;
                 case 3: 
@@ -121,7 +126,7 @@ request parseRequest(char data[]){
     }
 
     if (bufferVer[0] != '\0') {
-        request.requestType = getHttpVersion(bufferVer);
+        request.httpVersion = getHttpVersion(bufferVer);
         if (request.httpVersion == UNKNWOWN_HTTP_VER) {
             fprintf(stderr, "Unsupported request version: %s\n", bufferVer);
         }

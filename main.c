@@ -7,11 +7,11 @@
 
 #define MAX_SIZE 10000
 
-SOCKET server_fd, new_socket;
+SOCKET server_fd, client;
 
 void cleanAndClose(){
     closesocket(server_fd);
-    closesocket(new_socket);
+    closesocket(client);
     WSACleanup();
     exit(1);
 }
@@ -25,7 +25,6 @@ int main(){
     struct sockaddr_in address;
     int addrlen = sizeof(address);
     char buffer[MAX_SIZE] = {0};
-    char sendBuffer[300] = {0}; 
     
     if((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0){
         perror("Failed to create fd socket\n");
@@ -48,25 +47,16 @@ int main(){
     printf("[STATUS] Server started listening for incoming con...\n");
 
     while (1){
-        if((new_socket = accept(server_fd, (SOCKADDR *)&address, (socklen_t*)&addrlen)) < 0){
+        if((client = accept(server_fd, (SOCKADDR *)&address, (socklen_t*)&addrlen)) < 0){
             perror("Failed to accept con\n");
             cleanAndClose();
         }
     
-        recv(new_socket, buffer, MAX_SIZE, 0);
+        recv(client, buffer, MAX_SIZE, 0);
         request request = parseRequest(buffer);
-        if(request.httpVersion == UNKNWOWN_HTTP_VER){
-            sendVerNotSupported(new_socket);
-        }
-
-        FILE* file = fopen(concat(2, ".\\www\\", request.path), "r");
-        if(file == NULL){
-            sendNotFound(new_socket);
-        } else {
-            send(new_socket, fgets(sendBuffer, strlen(sendBuffer), file), sizeof(sendBuffer), 0);
-        }
-        fclose(file);
-
+        
+        manage_request(request, client);
+        
         printf("Sent response to client !\n");
     }
 

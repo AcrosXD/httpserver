@@ -1,0 +1,1 @@
+char* getFileContent(char* path, size_t size);

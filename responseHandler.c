@@ -45,15 +45,38 @@ const char* buildResponse(const char* body, int code, header headers[], size_t h
 }
 
 void sendNotFound(int socket){
-    header headers[1] = {0};
+    header headers[2] = {0};
+    const char* data = "<!doctype html><body><h1>404 not found</h1></body>";
+    char* size[6]; sprintf(size, "%d", strlen(data));
+    
+    /*---HEADERS---*/
     strcpy(headers[0].head, "Content-Type"); strcpy(headers[0].value, "text/html; charset=UTF-8");
-    const char* response = buildResponse("<!doctype html><body><h1>404 not found</h1></body>", 404, headers, 1);
+    strcpy(headers[1].head, "Content-Length"); strcpy(headers[1].value, size);
+
+    const char* response = buildResponse(data, 404, headers, 2);
     send(socket, response, strlen(response), 0);
 }
 
 void sendVerNotSupported(int socket){
-    header headers[1];
+    header headers[2] = {0};
+
+    /*---HEADERS---*/
     strcpy(headers[0].head, "Content-Type"); strcpy(headers[0].value, "text/plain; charset=UTF-8");
+
     const char* response = buildResponse("Not Suported", 505, headers, 1);
+    send(socket, response, strlen(response), 0);
+}
+
+void send_data_to_client(int socket, char* data, char* conty){
+    header headers[2] = {0};
+    char* size[6]; sprintf(size, "%d", strlen(data));
+
+    char* type = concat(2, conty, "; charset=UTF-8");
+
+    /*---HEADERS---*/
+    strcpy(headers[0].head, "Content-Type"); strcpy(headers[0].value, type);
+    strcpy(headers[1].head, "Content-Length"); strcpy(headers[1].value, size);
+
+    const char* response = buildResponse(data, 200, headers, 2);
     send(socket, response, strlen(response), 0);
 }

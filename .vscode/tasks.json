@@ -11,6 +11,8 @@
                 "parser.c",
                 "responseHandler.c",
                 "utils.c",
+                "file_handler.c",
+                "innerCon.c",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
                 "-luser32",
