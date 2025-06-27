@@ -20,7 +20,7 @@
     Returns: One char* of concatenated strings
 */
 char* concat(unsigned int n, ...){
-    size_t mem_to_alloc = 1; //Null char terminator
+    size_t mem_to_alloc = 1; //Null char terminator added
     size_t offset = 0;
     //Using n as a ref value and letting i do the work (what a lazy ass)
     int i = n;
@@ -28,7 +28,7 @@ char* concat(unsigned int n, ...){
     //Init va list
     va_list args;
     va_start(args, n);
-    //Calculate the amount of memory needed
+    //Compute the amount of memory needed
     do {
         mem_to_alloc += strlen(va_arg(args, char*));
         i--;
@@ -53,3 +53,4 @@ char* concat(unsigned int n, ...){
     
     return res;
 }
+
